@@ -1,0 +1,73 @@
+:root {
+  color-scheme: light;
+  --font-body: "Inter Variable", "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-heading: "Poppins", "Inter Variable", ui-sans-serif, system-ui, sans-serif;
+
+  --radius-card: 10px;
+  --radius-shell: 10px;
+
+  --color-background: #F5F7FA;
+  --color-foreground: #0F172A;
+  --color-muted-foreground: #475569;
+
+  --color-card: #FFFFFF;
+  --color-surface-muted: #E8EDF4;
+  --color-border: #DCE5F0;
+
+  --color-primary: #F24A00;
+  --color-primary-foreground: #FFF1EA;
+  --color-secondary: #D4AF37;
+  --color-secondary-foreground: #4A3605;
+
+  --color-sidebar: #12171E;
+  --color-sidebar-border: #273140;
+  --color-sidebar-foreground: #CBD5F5;
+  --color-sidebar-muted: #94A3B8;
+
+  --shadow-card: 0 22px 60px -34px rgb(15 23 42 / 0.26);
+}
+
+.dark {
+  color-scheme: dark;
+
+  --color-background: #0B0F14;
+  --color-foreground: #E5E7EB;
+  --color-muted-foreground: #94A3B8;
+
+  --color-card: #121821;
+  --color-surface-muted: #18212C;
+  --color-border: #233041;
+
+  --color-primary: #F24A00;
+  --color-primary-foreground: #FFF1EA;
+  --color-secondary: #D4AF37;
+  --color-secondary-foreground: #FFF2CC;
+}
+
+@theme inline {
+  --color-background: var(--color-background);
+  --color-foreground: var(--color-foreground);
+  --color-muted-foreground: var(--color-muted-foreground);
+
+  --color-card: var(--color-card);
+  --color-surface-muted: var(--color-surface-muted);
+  --color-border: var(--color-border);
+
+  --color-primary: var(--color-primary);
+  --color-primary-foreground: var(--color-primary-foreground);
+  --color-secondary: var(--color-secondary);
+  --color-secondary-foreground: var(--color-secondary-foreground);
+
+  --color-sidebar: var(--color-sidebar);
+  --color-sidebar-border: var(--color-sidebar-border);
+  --color-sidebar-foreground: var(--color-sidebar-foreground);
+  --color-sidebar-muted: var(--color-sidebar-muted);
+
+  --font-sans: var(--font-body);
+  --font-heading: var(--font-heading);
+
+  --radius-card: var(--radius-card);
+  --radius-shell: var(--radius-shell);
+
+  --shadow-card: var(--shadow-card);
+}
