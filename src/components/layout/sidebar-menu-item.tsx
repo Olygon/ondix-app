@@ -1,7 +1,7 @@
 import Link from "next/link";
 
 import type { NavigationItem } from "@/lib/navigation";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/helpers/cn";
 
 type SidebarMenuItemProps = {
   isActive: boolean;

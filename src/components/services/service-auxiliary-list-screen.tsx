@@ -13,7 +13,7 @@ import {
 } from "lucide-react";
 
 import { inactivateAuxiliaryCodeAction } from "@/app/(authenticated)/crm/servicos/actions";
-import { AuthMessage } from "@/components/auth/auth-message";
+import { AuthMessage } from "@/components/feedback/auth-message";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -41,7 +41,7 @@ import type {
   AuxiliaryCodeListFilters,
   AuxiliaryCodeListPageData,
 } from "@/lib/services/types";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/helpers/cn";
 
 const selectClassName =
   "h-11 w-full rounded-[6px] border border-border bg-card px-3 text-[12px] text-foreground shadow-sm outline-none transition-colors duration-150 focus:border-primary/30 focus:ring-2 focus:ring-primary/15 disabled:cursor-not-allowed disabled:opacity-60";
@@ -273,10 +273,9 @@ export function ServiceAuxiliaryListScreen({
 
       <Card>
         <CardHeader>
-          <CardTitle>Registros</CardTitle>
+          <CardTitle>Lista dos Códigos de Tributação</CardTitle>
           <CardDescription>
-            Tabela geral compartilhada por todas as empresas, sem duplicacao por
-            companyId.
+            Tabela geral de tributação do ISS por município.
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -292,7 +291,7 @@ export function ServiceAuxiliaryListScreen({
                     <tr className="text-left text-[11px] uppercase tracking-[0.16em] text-muted-foreground">
                       {data.kind === "municipalTax" ? (
                         <th className="border-b border-border/80 px-3 py-3 font-semibold">
-                          Municipio IBGE
+                          Município
                         </th>
                       ) : null}
                       {data.kind === "municipalTax" ? (
@@ -304,7 +303,7 @@ export function ServiceAuxiliaryListScreen({
                         <SortHeader
                           activeSort={data.filters.sort}
                           direction={data.filters.direction}
-                          label={data.kind === "municipalTax" ? "cTribMun" : "Codigo"}
+                          label={data.kind === "municipalTax" ? "cTribMun" : "Código"}
                           sort="code"
                           onSort={handleSort}
                         />
@@ -313,7 +312,7 @@ export function ServiceAuxiliaryListScreen({
                         <SortHeader
                           activeSort={data.filters.sort}
                           direction={data.filters.direction}
-                          label="Descricao"
+                          label="DESCRIÇÃO"
                           sort="description"
                           onSort={handleSort}
                         />
@@ -330,7 +329,7 @@ export function ServiceAuxiliaryListScreen({
                         </th>
                       ) : (
                         <th className="border-b border-border/80 px-3 py-3 font-semibold">
-                          ISS padrao
+                          ALÍQUOTA DE ISS
                         </th>
                       )}
                       {data.kind === "law116" ? (
@@ -344,12 +343,12 @@ export function ServiceAuxiliaryListScreen({
                         <SortHeader
                           activeSort={data.filters.sort}
                           direction={data.filters.direction}
-                          label="Status"
+                          label="STATUS"
                           sort="status"
                           onSort={handleSort}
                         />
                       </th>
-                      <th className="border-b border-border/80 px-3 py-3 text-right font-semibold">Acoes</th>
+                      <th className="border-b border-border/80 px-3 py-3 text-right font-semibold">Ações</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -366,9 +365,10 @@ export function ServiceAuxiliaryListScreen({
                           }
                         }}
                       >
+
                         {data.kind === "municipalTax" ? (
                           <td className="border-b border-border/60 px-3 py-3 align-middle text-muted-foreground">
-                            {row.municipalityIbgeCode}
+                            {row.municipalityName || "-"}
                           </td>
                         ) : null}
                         {data.kind === "municipalTax" ? (

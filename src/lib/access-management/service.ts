@@ -44,7 +44,7 @@ import {
   formatBrazilPhone,
   formatDateBr,
   onlyDigits,
-} from "@/lib/company/formatters";
+} from "@/lib/formatters/brazil";
 import { prisma } from "@/lib/db";
 
 const BLOCKED_ACCOUNT_MESSAGE =

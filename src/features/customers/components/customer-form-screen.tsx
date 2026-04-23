@@ -18,8 +18,8 @@ import type { CustomerType } from "@prisma/client";
 import {
   deleteCustomerAction,
   saveCustomerAction,
-} from "@/app/(authenticated)/crm/cliente/actions";
-import { AuthMessage } from "@/components/auth/auth-message";
+} from "@/features/customers/actions";
+import { AuthMessage } from "@/components/feedback/auth-message";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -33,24 +33,22 @@ import { PageHeader } from "@/components/ui/page-header";
 import {
   customerStatusOptions,
   customerTypeOptions,
-} from "@/lib/customer/constants";
-import {
-  formatCpf,
-} from "@/lib/customer/formatters";
+} from "@/features/customers/constants/customer-constants";
 import {
   initialCustomerCollectionActionState,
   initialCustomerFormActionState,
-} from "@/lib/customer/form-state";
+} from "@/features/customers/types/customer-form-state";
 import type {
   CustomerFormPageData,
   CustomerFormValues,
-} from "@/lib/customer/types";
+} from "@/features/customers/types/customer-types";
 import {
   formatBrazilPhone,
   formatCnpj,
+  formatCpf,
   formatPostalCode,
-} from "@/lib/company/formatters";
-import { brazilianStates } from "@/lib/company/constants";
+} from "@/lib/formatters/brazil";
+import { brazilianStates } from "@/lib/constants/brazil";
 
 const selectClassName =
   "h-11 w-full rounded-[6px] border border-border bg-card px-3 text-[12px] text-foreground shadow-sm outline-none transition-colors duration-150 focus:border-primary/30 focus:ring-2 focus:ring-primary/15 disabled:cursor-not-allowed disabled:opacity-60";

@@ -13,7 +13,7 @@ import {
 } from "@/lib/access-control/permissions";
 import { requirePermission } from "@/lib/access-control/permission-service";
 import { RESOURCE_CODES } from "@/lib/access-control/resources";
-import { formatDateBr } from "@/lib/company/formatters";
+import { formatDateBr } from "@/lib/formatters/brazil";
 import { prisma } from "@/lib/db";
 import { payableInvoiceStatuses } from "@/lib/subscription/constants";
 import type {

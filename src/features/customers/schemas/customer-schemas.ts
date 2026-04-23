@@ -3,14 +3,12 @@ import { z } from "zod";
 import {
   customerStatusOptions,
   customerTypeOptions,
-} from "@/lib/customer/constants";
-import {
-  isValidCpf,
-} from "@/lib/customer/formatters";
+} from "@/features/customers/constants/customer-constants";
 import {
   isValidCnpj,
+  isValidCpf,
   onlyDigits,
-} from "@/lib/company/formatters";
+} from "@/lib/formatters/brazil";
 
 const optionalTrimmedString = z
   .string()

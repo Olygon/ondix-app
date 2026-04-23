@@ -1,4 +1,4 @@
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/helpers/cn";
 
 type StatusBadgeProps = {
   className?: string;
@@ -8,13 +8,13 @@ type StatusBadgeProps = {
 
 const toneClasses = {
   error:
-    "border-red-300/60 bg-red-50/70 text-red-700 dark:border-red-500/30 dark:bg-red-500/10 dark:text-red-200",
+    "border-[#a20202] bg-[#ff0101]/20 text-[#a20202] dark:border-[#ff0101] dark:bg-[#a20202]/50 dark:text-[#ff0101]",
   info:
-    "border-blue-300/60 bg-blue-50/70 text-blue-700 dark:border-blue-500/30 dark:bg-blue-500/10 dark:text-blue-200",
+    "border-[#0515a2] bg-[#008cff]/20 text-[#0515a2] dark:border-[#008cff] dark:bg-[#0515a2]/50 dark:text-[#008cff]",
   success:
-    "border-emerald-300/60 bg-emerald-50/70 text-emerald-700 dark:border-emerald-500/30 dark:bg-emerald-500/10 dark:text-emerald-200",
+    "border-[#008b49] bg-[#00ff85]/20 text-[#008b49] dark:border-[#00ff85] dark:bg-[#008b49]/50 dark:text-[#00ff85]",
   warning:
-    "border-amber-300/60 bg-amber-50/70 text-amber-700 dark:border-amber-500/30 dark:bg-amber-500/10 dark:text-amber-200",
+    "border-[#aa8b0a] bg-[#ffcd00]/20 text-[#aa8b0a] dark:border-[#ffcd00] dark:bg-[#aa8b0a]/50 dark:text-[#ffcd00]",
 } as const;
 
 export function StatusBadge({

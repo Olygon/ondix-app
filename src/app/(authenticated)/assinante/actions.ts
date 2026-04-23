@@ -10,22 +10,7 @@ import {
 } from "@/lib/company/form-state";
 import { saveSubscriberCompanyProfile, cancelActiveCompanySubscription } from "@/lib/company/service";
 import { subscriberCompanySchema } from "@/lib/company/validators";
-
-function getFormValue(formData: FormData, key: string) {
-  const value = formData.get(key);
-
-  return typeof value === "string" ? value : "";
-}
-
-function getFormFile(formData: FormData, key: string) {
-  const value = formData.get(key);
-
-  return value instanceof File ? value : null;
-}
-
-function getFormBoolean(formData: FormData, key: string) {
-  return getFormValue(formData, key) === "true";
-}
+import { getBooleanValue, getFormFile, getFormValue } from "@/lib/helpers/form-data";
 
 export async function saveSubscriberCompanyAction(
   previousState: SubscriberCompanyActionState = initialSubscriberCompanyActionState,
@@ -73,7 +58,7 @@ export async function saveSubscriberCompanyAction(
     ...parsedData.data,
     digitalCertificateFile: getFormFile(formData, "digitalCertificateFile"),
     logoFile: getFormFile(formData, "logoFile"),
-    removeLogo: getFormBoolean(formData, "removeLogo"),
+    removeLogo: getBooleanValue(formData, "removeLogo"),
   });
 
   if (!result.ok) {

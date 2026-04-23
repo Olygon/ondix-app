@@ -1,4 +1,4 @@
-import { CustomerListScreen } from "@/components/customer/customer-list-screen";
+import { CustomerListScreen } from "@/features/customers/components/customer-list-screen";
 import { Breadcrumb, type BreadcrumbItem } from "@/components/ui/breadcrumb";
 import {
   getCustomerListPageData,

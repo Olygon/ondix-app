@@ -23,7 +23,7 @@ import {
   cancelSubscriptionAction,
   saveSubscriberCompanyAction,
 } from "@/app/(authenticated)/assinante/actions";
-import { AuthMessage } from "@/components/auth/auth-message";
+import { AuthMessage } from "@/components/feedback/auth-message";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -39,8 +39,8 @@ import {
   formatBrazilPhone,
   formatCnpj,
   formatPostalCode,
-} from "@/lib/company/formatters";
-import { brazilianStates } from "@/lib/company/constants";
+} from "@/lib/formatters/brazil";
+import { brazilianStates } from "@/lib/constants/brazil";
 import type { SubscriberCompanyPageData } from "@/lib/company/types";
 
 type SubscriberCompanyScreenProps = {

@@ -9,7 +9,7 @@ import type { Metadata } from "next";
 import { cookies } from "next/headers";
 
 import { ThemeProvider } from "@/components/providers/theme-provider";
-import { THEME_COOKIE_NAME, resolveThemeMode } from "@/lib/theme";
+import { THEME_COOKIE_NAME, resolveThemeMode } from "@/lib/constants/theme";
 
 import "./globals.css";
 

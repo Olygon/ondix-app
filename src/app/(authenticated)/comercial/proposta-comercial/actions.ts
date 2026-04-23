@@ -21,12 +21,7 @@ import {
   getFieldErrors,
 } from "@/lib/commercial-proposals/validators";
 import { commercialProposalBaseRoute } from "@/lib/commercial-proposals/constants";
-
-function getFormValue(formData: FormData, key: string) {
-  const value = formData.get(key);
-
-  return typeof value === "string" ? value : "";
-}
+import { getFormValue } from "@/lib/helpers/form-data";
 
 function getItemsFromForm(formData: FormData) {
   const rawItems = getFormValue(formData, "itemsJson");

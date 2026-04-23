@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { ArrowLeft, PencilLine, Plus, ShieldCheck, Trash2, UsersRound } from "lucide-react";
 
 import { cancelManagedUserAction } from "@/app/(authenticated)/assinante/gestao-acessos/actions";
-import { AuthMessage } from "@/components/auth/auth-message";
+import { AuthMessage } from "@/components/feedback/auth-message";
 import { Button } from "@/components/ui/button";
 import {
   Card,

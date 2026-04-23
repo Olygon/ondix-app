@@ -8,7 +8,7 @@ import {
   cancelManagedUserAction,
   saveManagedUserAction,
 } from "@/app/(authenticated)/assinante/gestao-acessos/actions";
-import { AuthMessage } from "@/components/auth/auth-message";
+import { AuthMessage } from "@/components/feedback/auth-message";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -30,7 +30,7 @@ import {
   userStatusOptions,
 } from "@/lib/access-management/constants";
 import type { UserAccountPageData } from "@/lib/access-management/types";
-import { formatBrazilPhone } from "@/lib/company/formatters";
+import { formatBrazilPhone } from "@/lib/formatters/brazil";
 
 const selectClassName =
   "h-11 w-full rounded-[6px] border border-border bg-card px-3 text-[12px] text-foreground shadow-sm outline-none transition-colors duration-150 focus:border-primary/30 focus:ring-2 focus:ring-primary/15 disabled:cursor-not-allowed disabled:opacity-60";

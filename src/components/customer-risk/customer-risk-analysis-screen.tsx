@@ -24,7 +24,7 @@ import {
   saveCustomerRiskAnalysisAction,
   startCustomerRiskAnalysisAction,
 } from "@/app/(authenticated)/crm/cliente/[customerId]/analise-risco/actions";
-import { AuthMessage } from "@/components/auth/auth-message";
+import { AuthMessage } from "@/components/feedback/auth-message";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -55,7 +55,7 @@ import type {
 import {
   customerTypeLabels,
 } from "@/lib/customer/constants";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/helpers/cn";
 
 const selectClassName =
   "h-11 w-full rounded-[6px] border border-border bg-card px-3 text-[12px] text-foreground shadow-sm outline-none transition-colors duration-150 focus:border-primary/30 focus:ring-2 focus:ring-primary/15 disabled:cursor-not-allowed disabled:opacity-60";

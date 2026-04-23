@@ -31,11 +31,11 @@ import type {
   CustomerCertificateSummary,
   PublicCertificateUploadPageData,
 } from "@/lib/customer-certificates/types";
-import { formatCpfCnpj } from "@/lib/customer/formatters";
 import {
   formatDateBr,
+  formatCpfCnpj,
   onlyDigits,
-} from "@/lib/company/formatters";
+} from "@/lib/formatters/brazil";
 import { prisma } from "@/lib/db";
 
 type CustomerCertificateWithRelations = CustomerCertificate & {

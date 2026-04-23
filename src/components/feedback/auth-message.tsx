@@ -4,7 +4,7 @@ import type { CSSProperties, ReactNode } from "react";
 import { CircleAlert, CircleCheckBig, Info, TriangleAlert } from "lucide-react";
 
 import { useTheme } from "@/components/providers/theme-provider";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/helpers/cn";
 
 type AuthMessageProps = {
   children: ReactNode;
@@ -21,47 +21,47 @@ const iconMap = {
 
 const lightStyles: Record<NonNullable<AuthMessageProps["tone"]>, CSSProperties> = {
   error: {
-    backgroundColor: "rgba(254, 242, 242, 0.42)",
-    borderColor: "rgba(127, 29, 29, 0.22)",
-    color: "#7F1D1D",
+    backgroundColor: "rgba(255, 1, 1, 0.2)",
+    borderColor: "#a20202",
+    color: "#a20202",
   },
   info: {
-    backgroundColor: "rgba(239, 246, 255, 0.42)",
-    borderColor: "rgba(30, 64, 175, 0.22)",
-    color: "#1E40AF",
+    backgroundColor: "rgba(0, 140, 255, 0.2)",
+    borderColor: "#0515a2",
+    color: "#0515a2",
   },
   success: {
-    backgroundColor: "rgba(236, 253, 245, 0.42)",
-    borderColor: "rgba(6, 95, 70, 0.22)",
-    color: "#065F46",
+    backgroundColor: "rgba(0, 255, 133, 0.2)",
+    borderColor: "#008b49",
+    color: "#008b49",
   },
   warning: {
-    backgroundColor: "rgba(255, 251, 235, 0.42)",
-    borderColor: "rgba(146, 64, 14, 0.22)",
-    color: "#92400E",
+    backgroundColor: "rgba(255, 205, 0, 0.2)",
+    borderColor: "#aa8b0a",
+    color: "#aa8b0a",
   },
 };
 
 const darkStyles: Record<NonNullable<AuthMessageProps["tone"]>, CSSProperties> = {
   error: {
-    backgroundColor: "rgba(239, 68, 68, 0.12)",
-    borderColor: "rgba(252, 165, 165, 0.24)",
-    color: "#FEF2F2",
+    backgroundColor: "rgba(162, 2, 2, 0.5)",
+    borderColor: "#ff0101",
+    color: "#ff0101",
   },
   info: {
-    backgroundColor: "rgba(59, 130, 246, 0.12)",
-    borderColor: "rgba(147, 197, 253, 0.24)",
-    color: "#EFF6FF",
+    backgroundColor: "rgba(5, 21, 162, 0.5)",
+    borderColor: "#008cff",
+    color: "#008cff",
   },
   success: {
-    backgroundColor: "rgba(16, 185, 129, 0.12)",
-    borderColor: "rgba(110, 231, 183, 0.24)",
-    color: "#ECFDF5",
+    backgroundColor: "rgba(0, 139, 73, 0.5)",
+    borderColor: "#00ff85",
+    color: "#00ff85",
   },
   warning: {
-    backgroundColor: "rgba(245, 158, 11, 0.12)",
-    borderColor: "rgba(253, 230, 138, 0.24)",
-    color: "#FFFBEB",
+    backgroundColor: "rgba(170, 139, 10, 0.5)",
+    borderColor: "#ffcd00",
+    color: "#ffcd00",
   },
 };
 

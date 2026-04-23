@@ -18,16 +18,7 @@ import {
   getFieldErrors,
   riskAnalysisSchema,
 } from "@/lib/customer-risk/validators";
-
-function getFormValue(formData: FormData, key: string) {
-  const value = formData.get(key);
-
-  return typeof value === "string" ? value : "";
-}
-
-function getBooleanSelectValue(formData: FormData, key: string) {
-  return getFormValue(formData, key) === "true";
-}
+import { getBooleanValue, getFormValue } from "@/lib/helpers/form-data";
 
 function revalidateRiskPaths(customerId: string) {
   revalidatePath("/crm/cliente");
@@ -78,7 +69,7 @@ export async function saveCustomerRiskAnalysisAction(
   const riskAnalysisId = getFormValue(formData, "riskAnalysisId");
   const parsedData = riskAnalysisSchema.safeParse({
     activeContractScore: getFormValue(formData, "activeContractScore"),
-    allowsInstallments: getBooleanSelectValue(formData, "allowsInstallments"),
+    allowsInstallments: getBooleanValue(formData, "allowsInstallments"),
     analysisStatus: getFormValue(formData, "analysisStatus"),
     approvedSalesLimit: getFormValue(formData, "approvedSalesLimit"),
     commercialDependencyScore: getFormValue(formData, "commercialDependencyScore"),
@@ -94,12 +85,12 @@ export async function saveCustomerRiskAnalysisAction(
     notes: getFormValue(formData, "notes"),
     recommendedSalesLimit: getFormValue(formData, "recommendedSalesLimit"),
     relationshipTimeScore: getFormValue(formData, "relationshipTimeScore"),
-    requiresAdditionalGuarantee: getBooleanSelectValue(
+    requiresAdditionalGuarantee: getBooleanValue(
       formData,
       "requiresAdditionalGuarantee",
     ),
-    requiresDownPayment: getBooleanSelectValue(formData, "requiresDownPayment"),
-    requiresFormalContract: getBooleanSelectValue(formData, "requiresFormalContract"),
+    requiresDownPayment: getBooleanValue(formData, "requiresDownPayment"),
+    requiresFormalContract: getBooleanValue(formData, "requiresFormalContract"),
     riskConcentrationScore: getFormValue(formData, "riskConcentrationScore"),
     riskLevel: getFormValue(formData, "riskLevel"),
   });

@@ -37,7 +37,7 @@ import type {
   ProvidedServiceListFilters,
   ProvidedServiceListPageData,
 } from "@/lib/services/types";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/helpers/cn";
 
 const selectClassName =
   "h-11 w-full rounded-[6px] border border-border bg-card px-3 text-[12px] text-foreground shadow-sm outline-none transition-colors duration-150 focus:border-primary/30 focus:ring-2 focus:ring-primary/15 disabled:cursor-not-allowed disabled:opacity-60";

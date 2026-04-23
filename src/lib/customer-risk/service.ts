@@ -31,11 +31,8 @@ import type {
   RiskEventRow,
   RiskExternalQueryView,
 } from "@/lib/customer-risk/types";
-import {
-  formatCpfCnpj,
-  formatCustomerCode,
-} from "@/lib/customer/formatters";
-import { formatDateBr } from "@/lib/company/formatters";
+import { formatCustomerCode } from "@/lib/customer/formatters";
+import { formatCpfCnpj, formatDateBr } from "@/lib/formatters/brazil";
 import { prisma } from "@/lib/db";
 
 type DecimalLike = {

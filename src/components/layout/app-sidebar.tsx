@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import type { ComponentProps } from "react";
+import { useSyncExternalStore, type ComponentProps } from "react";
 import { Building2, MoonStar, ShieldCheck, SunMedium } from "lucide-react";
 
 import { OndixLogo } from "@/components/layout/ondix-logo";
@@ -13,6 +13,26 @@ import { filterNavigationGroupsByPermissions } from "@/lib/navigation";
 
 const footerActionClassName =
   "inline-flex h-7 w-7 items-center justify-center rounded-[6px] bg-transparent text-sidebar-muted transition-all duration-150 hover:scale-[1.03] hover:text-primary";
+
+function subscribeToHydration() {
+  return () => {};
+}
+
+function getHydratedSnapshot() {
+  return true;
+}
+
+function getServerHydratedSnapshot() {
+  return false;
+}
+
+function useIsHydrated() {
+  return useSyncExternalStore(
+    subscribeToHydration,
+    getHydratedSnapshot,
+    getServerHydratedSnapshot,
+  );
+}
 
 function InstagramIcon(props: ComponentProps<"svg">) {
   return (
@@ -68,6 +88,12 @@ export function AppSidebar({
 }: AppSidebarProps) {
   const pathname = usePathname();
   const { isDark, toggleTheme } = useTheme();
+  const isThemeToggleHydrated = useIsHydrated();
+  const themeToggleLabel = isThemeToggleHydrated
+    ? isDark
+      ? "Ativar modo claro"
+      : "Ativar modo escuro"
+    : "Alternar tema";
   const navigationGroups = filterNavigationGroupsByPermissions(permissions);
 
   return (
@@ -159,16 +185,14 @@ export function AppSidebar({
               type="button"
               onClick={toggleTheme}
               className={footerActionClassName}
-              aria-label={isDark ? "Ativar modo claro" : "Ativar modo escuro"}
+              aria-label={themeToggleLabel}
             >
-              {isDark ? (
+              {isThemeToggleHydrated && isDark ? (
                 <SunMedium className="h-3.5 w-3.5" />
               ) : (
                 <MoonStar className="h-3.5 w-3.5" />
               )}
-              <span className="sr-only">
-                {isDark ? "Ativar modo claro" : "Ativar modo escuro"}
-              </span>
+              <span className="sr-only">{themeToggleLabel}</span>
             </button>
           </footer>
         </div>

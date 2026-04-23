@@ -3,6 +3,7 @@ import "server-only";
 import { redirect } from "next/navigation";
 import type {
   EntityStatus,
+  Municipality,
   MunicipalTaxCode,
   Prisma,
   PrismaClient,
@@ -19,7 +20,7 @@ import {
 } from "@/lib/access-control/permissions";
 import { requirePermission } from "@/lib/access-control/permission-service";
 import { RESOURCE_CODES } from "@/lib/access-control/resources";
-import { formatDateBr } from "@/lib/company/formatters";
+import { formatDateBr } from "@/lib/formatters/brazil";
 import { prisma } from "@/lib/db";
 import {
   auxiliaryCodePageSize,
@@ -39,6 +40,7 @@ import type {
   AuxiliaryCodeListFilters,
   AuxiliaryCodeListPageData,
   AuxiliaryCodeListRow,
+  MunicipalityOption,
   MunicipalTaxCodeOption,
   ProvidedServiceFormPageData,
   ProvidedServiceFormValues,
@@ -189,6 +191,34 @@ function formatCodeOption(code: string, description: string) {
   return `${code} - ${description}`;
 }
 
+function getCodePrimaryNumber(code: string) {
+  const match = code.trim().match(/^\d+/);
+
+  return match ? Number(match[0]) : 0;
+}
+
+function compareText(valueA: string | null | undefined, valueB: string | null | undefined) {
+  return (valueA ?? "").localeCompare(valueB ?? "", "pt-BR", {
+    sensitivity: "base",
+  });
+}
+
+function compareClassificationCode(codeA: string, codeB: string) {
+  const primaryComparison = getCodePrimaryNumber(codeA) - getCodePrimaryNumber(codeB);
+
+  if (primaryComparison !== 0) {
+    return primaryComparison;
+  }
+
+  return codeA.localeCompare(codeB, "pt-BR", {
+    sensitivity: "base",
+  });
+}
+
+function applySortDirection(comparison: number, direction: ServiceSortDirection) {
+  return direction === "desc" ? comparison * -1 : comparison;
+}
+
 function parseProvidedServiceFilters(
   searchParams?: ServiceSearchParams,
 ): ProvidedServiceListFilters {
@@ -295,6 +325,28 @@ function mapProvidedServiceListRow(
   };
 }
 
+function sortProvidedServicesByClassificationCode(
+  services: Array<
+    ProvidedService & {
+      serviceLaw116: ServiceLaw116Code;
+      serviceNbs: ServiceNbsCode;
+    }
+  >,
+  sort: ProvidedServiceSortField,
+  direction: ServiceSortDirection,
+) {
+  return [...services].sort((serviceA, serviceB) => {
+    const codeA = sort === "law116" ? serviceA.serviceLaw116.cTribNac : serviceA.serviceNbs.code;
+    const codeB = sort === "law116" ? serviceB.serviceLaw116.cTribNac : serviceB.serviceNbs.code;
+    const classificationComparison = applySortDirection(
+      compareClassificationCode(codeA, codeB),
+      direction,
+    );
+
+    return classificationComparison || serviceA.code - serviceB.code;
+  });
+}
+
 function mapServiceOption(code: ServiceLaw116Code | ServiceNbsCode): ServiceOption {
   const codeValue = "cTribNac" in code ? code.cTribNac : code.code;
 
@@ -309,10 +361,20 @@ function mapMunicipalTaxCodeOption(code: MunicipalTaxCode): MunicipalTaxCodeOpti
   return {
     defaultIssRate: toDecimalInput(code.defaultIssRate),
     id: code.id,
-    label: `${code.municipalityIbgeCode} / ${code.stateCode || "UF"} / ${code.cTribMun} - ${code.description}`,
+    label: `${code.municipalityName || "Municipio"} / ${code.stateCode || "UF"} / ${code.municipalityIbgeCode} / ${code.cTribMun} - ${code.description}`,
     municipalityIbgeCode: code.municipalityIbgeCode,
+    municipalityName: code.municipalityName,
     stateCode: code.stateCode,
     status: code.status,
+  };
+}
+
+function mapMunicipalityOption(municipality: Municipality): MunicipalityOption {
+  return {
+    ibgeCode: municipality.ibgeCode,
+    label: `${municipality.ibgeCode} - ${municipality.name}/${municipality.stateCode}`,
+    name: municipality.name,
+    stateCode: municipality.stateCode,
   };
 }
 
@@ -329,6 +391,7 @@ function mapTaxRuleRow(
     issRate: toDecimalInput(rule.issRate),
     municipalTaxCodeId: rule.municipalTaxCodeId,
     municipalityIbgeCode: rule.municipalityIbgeCode,
+    municipalityName: rule.municipalTaxCode.municipalityName,
     notes: rule.notes ?? "",
   };
 }
@@ -431,19 +494,33 @@ export async function getProvidedServiceListPageData(
   const context = await requirePermission(RESOURCE_CODES.crmProvidedServices, "view");
   const filters = parseProvidedServiceFilters(searchParams);
   const where = buildProvidedServiceWhere(context.company.id, filters);
-  const [totalItems, services] = await Promise.all([
-    prisma.providedService.count({ where }),
-    prisma.providedService.findMany({
-      include: {
-        serviceLaw116: true,
-        serviceNbs: true,
-      },
-      orderBy: buildProvidedServiceOrderBy(filters.sort, filters.direction),
-      skip: (filters.page - 1) * providedServicePageSize,
-      take: providedServicePageSize,
-      where,
-    }),
-  ]);
+  const requiresClassificationSort = filters.sort === "law116" || filters.sort === "nbs";
+  const services = requiresClassificationSort
+    ? sortProvidedServicesByClassificationCode(
+        await prisma.providedService.findMany({
+          include: {
+            serviceLaw116: true,
+            serviceNbs: true,
+          },
+          where,
+        }),
+        filters.sort,
+        filters.direction,
+      ).slice(
+        (filters.page - 1) * providedServicePageSize,
+        filters.page * providedServicePageSize,
+      )
+    : await prisma.providedService.findMany({
+        include: {
+          serviceLaw116: true,
+          serviceNbs: true,
+        },
+        orderBy: buildProvidedServiceOrderBy(filters.sort, filters.direction),
+        skip: (filters.page - 1) * providedServicePageSize,
+        take: providedServicePageSize,
+        where,
+      });
+  const totalItems = await prisma.providedService.count({ where });
   const totalPages = Math.max(1, Math.ceil(totalItems / providedServicePageSize));
 
   return {
@@ -487,6 +564,7 @@ export async function getProvidedServiceFormPageData(
     }),
     prisma.municipalTaxCode.findMany({
       orderBy: [
+        { municipalityName: "asc" },
         { municipalityIbgeCode: "asc" },
         { stateCode: "asc" },
         { cTribMun: "asc" },
@@ -511,9 +589,17 @@ export async function getProvidedServiceFormPageData(
     createdAt: service ? formatDateBr(service.createdAt) : "",
     createdByName: service?.createdBy?.fullName ?? "",
     isEditMode: Boolean(service),
-    law116Options: law116Codes.map(mapServiceOption),
-    municipalTaxCodeOptions: municipalTaxCodes.map(mapMunicipalTaxCodeOption),
-    nbsOptions: nbsCodes.map(mapServiceOption),
+    law116Options: [...law116Codes]
+      .sort((codeA, codeB) => compareClassificationCode(codeA.cTribNac, codeB.cTribNac))
+      .map(mapServiceOption),
+    municipalTaxCodeOptions: sortMunicipalTaxCodes(
+      municipalTaxCodes,
+      "code",
+      "asc",
+    ).map(mapMunicipalTaxCodeOption),
+    nbsOptions: [...nbsCodes]
+      .sort((codeA, codeB) => compareClassificationCode(codeA.code, codeB.code))
+      .map(mapServiceOption),
     service: mapProvidedServiceFormValues(service, nextCode),
     taxRules: service?.municipalTaxRules.map(mapTaxRuleRow) ?? [],
     updatedAt: service ? formatDateBr(service.updatedAt) : "",
@@ -792,6 +878,7 @@ function buildAuxiliaryWhere(
             { cTribMun: { contains: filters.search, mode: "insensitive" } },
             { description: { contains: filters.search, mode: "insensitive" } },
             { municipalityIbgeCode: { contains: filters.search } },
+            { municipalityName: { contains: filters.search, mode: "insensitive" } },
             { stateCode: { contains: filters.search, mode: "insensitive" } },
           ]
         : undefined,
@@ -823,66 +910,100 @@ function buildAuxiliaryWhere(
   };
 }
 
-function buildAuxiliaryOrderBy(
-  kind: ServiceAuxiliaryKind,
+function sortMunicipalTaxCodes(
+  codes: MunicipalTaxCode[],
   sort: AuxiliaryCodeSortField,
   direction: ServiceSortDirection,
 ) {
-  if (kind === "municipalTax") {
+  return [...codes].sort((codeA, codeB) => {
     if (sort === "description") {
-      return [
-        { description: direction },
-        { municipalityIbgeCode: "asc" },
-        { stateCode: "asc" },
-        { cTribMun: "asc" },
-      ];
+      return (
+        applySortDirection(compareText(codeA.description, codeB.description), direction) ||
+        compareText(codeA.municipalityName, codeB.municipalityName) ||
+        compareClassificationCode(codeA.cTribMun, codeB.cTribMun)
+      );
     }
 
     if (sort === "status") {
-      return [
-        { status: direction },
-        { municipalityIbgeCode: "asc" },
-        { stateCode: "asc" },
-        { cTribMun: "asc" },
-      ];
+      return (
+        applySortDirection(compareText(codeA.status, codeB.status), direction) ||
+        compareText(codeA.municipalityName, codeB.municipalityName) ||
+        compareClassificationCode(codeA.cTribMun, codeB.cTribMun)
+      );
     }
 
-    return [
-      { municipalityIbgeCode: "asc" },
-      { stateCode: "asc" },
-      { cTribMun: direction },
-    ];
-  }
+    return (
+      applySortDirection(compareClassificationCode(codeA.cTribMun, codeB.cTribMun), direction) ||
+      compareText(codeA.municipalityName, codeB.municipalityName) ||
+      compareText(codeA.stateCode, codeB.stateCode) ||
+      compareText(codeA.municipalityIbgeCode, codeB.municipalityIbgeCode)
+    );
+  });
+}
 
-  if (kind === "nbs") {
+function sortNbsCodes(
+  codes: ServiceNbsCode[],
+  sort: AuxiliaryCodeSortField,
+  direction: ServiceSortDirection,
+) {
+  return [...codes].sort((codeA, codeB) => {
     if (sort === "description") {
-      return [{ description: direction }, { code: "asc" }];
+      return (
+        applySortDirection(compareText(codeA.description, codeB.description), direction) ||
+        compareClassificationCode(codeA.code, codeB.code)
+      );
     }
 
     if (sort === "category") {
-      return [{ category: direction }, { code: "asc" }];
+      return (
+        applySortDirection(compareText(codeA.category, codeB.category), direction) ||
+        compareClassificationCode(codeA.code, codeB.code)
+      );
     }
 
     if (sort === "status") {
-      return [{ status: direction }, { code: "asc" }];
+      return (
+        applySortDirection(compareText(codeA.status, codeB.status), direction) ||
+        compareClassificationCode(codeA.code, codeB.code)
+      );
     }
 
-    return [{ code: direction }];
-  }
+    return applySortDirection(compareClassificationCode(codeA.code, codeB.code), direction);
+  });
+}
 
-  if (sort === "description") {
-    return [{ description: direction }, { cTribNac: "asc" }];
-  }
+function sortLaw116Codes(
+  codes: ServiceLaw116Code[],
+  sort: AuxiliaryCodeSortField,
+  direction: ServiceSortDirection,
+) {
+  return [...codes].sort((codeA, codeB) => {
+    if (sort === "description") {
+      return (
+        applySortDirection(compareText(codeA.description, codeB.description), direction) ||
+        compareClassificationCode(codeA.cTribNac, codeB.cTribNac)
+      );
+    }
 
-  if (sort === "category") {
-    return [{ category: direction }, { cTribNac: "asc" }];
-  }
+    if (sort === "category") {
+      return (
+        applySortDirection(compareText(codeA.category, codeB.category), direction) ||
+        compareClassificationCode(codeA.cTribNac, codeB.cTribNac)
+      );
+    }
 
-  if (sort === "status") {
-    return [{ status: direction }, { cTribNac: "asc" }];
-  }
+    if (sort === "status") {
+      return (
+        applySortDirection(compareText(codeA.status, codeB.status), direction) ||
+        compareClassificationCode(codeA.cTribNac, codeB.cTribNac)
+      );
+    }
 
-  return [{ cTribNac: direction }];
+    return applySortDirection(
+      compareClassificationCode(codeA.cTribNac, codeB.cTribNac),
+      direction,
+    );
+  });
 }
 
 function mapAuxiliaryRow(
@@ -899,6 +1020,7 @@ function mapAuxiliaryRow(
       description: taxCode.description,
       id: taxCode.id,
       municipalityIbgeCode: taxCode.municipalityIbgeCode,
+      municipalityName: taxCode.municipalityName,
       stateCode: taxCode.stateCode,
       status: taxCode.status,
     };
@@ -960,35 +1082,38 @@ async function findAuxiliaryRows(
     | Prisma.ServiceLaw116CodeWhereInput
     | Prisma.ServiceNbsCodeWhereInput
     | Prisma.MunicipalTaxCodeWhereInput,
-  orderBy: unknown,
-  page: number,
+  filters: AuxiliaryCodeListFilters,
 ) {
-  const query = {
-    skip: (page - 1) * auxiliaryCodePageSize,
-    take: auxiliaryCodePageSize,
-  };
+  const startIndex = (filters.page - 1) * auxiliaryCodePageSize;
+  const endIndex = filters.page * auxiliaryCodePageSize;
 
   if (kind === "municipalTax") {
-    return prisma.municipalTaxCode.findMany({
-      ...query,
-      orderBy: orderBy as Prisma.MunicipalTaxCodeOrderByWithRelationInput[],
+    const rows = await prisma.municipalTaxCode.findMany({
       where: where as Prisma.MunicipalTaxCodeWhereInput,
     });
+
+    return sortMunicipalTaxCodes(rows, filters.sort, filters.direction).slice(
+      startIndex,
+      endIndex,
+    );
   }
 
   if (kind === "nbs") {
-    return prisma.serviceNbsCode.findMany({
-      ...query,
-      orderBy: orderBy as Prisma.ServiceNbsCodeOrderByWithRelationInput[],
+    const rows = await prisma.serviceNbsCode.findMany({
       where: where as Prisma.ServiceNbsCodeWhereInput,
     });
+
+    return sortNbsCodes(rows, filters.sort, filters.direction).slice(startIndex, endIndex);
   }
 
-  return prisma.serviceLaw116Code.findMany({
-    ...query,
-    orderBy: orderBy as Prisma.ServiceLaw116CodeOrderByWithRelationInput[],
+  const rows = await prisma.serviceLaw116Code.findMany({
     where: where as Prisma.ServiceLaw116CodeWhereInput,
   });
+
+  return sortLaw116Codes(rows, filters.sort, filters.direction).slice(
+    startIndex,
+    endIndex,
+  );
 }
 
 export async function getAuxiliaryCodeListPageData(
@@ -1000,12 +1125,7 @@ export async function getAuxiliaryCodeListPageData(
   const where = buildAuxiliaryWhere(kind, filters);
   const [totalItems, rows] = await Promise.all([
     countAuxiliaryRows(kind, where),
-    findAuxiliaryRows(
-      kind,
-      where,
-      buildAuxiliaryOrderBy(kind, filters.sort, filters.direction),
-      filters.page,
-    ),
+    findAuxiliaryRows(kind, where, filters),
   ]);
   const totalPages = Math.max(1, Math.ceil(totalItems / auxiliaryCodePageSize));
 
@@ -1039,6 +1159,7 @@ function emptyAuxiliaryCode(): AuxiliaryCodeFormValues {
     description: "",
     id: null,
     municipalityIbgeCode: "",
+    municipalityName: "",
     stateCode: "",
     requiresConstruction: false,
     requiresEvent: false,
@@ -1065,6 +1186,7 @@ function mapAuxiliaryFormValues(
       description: taxCode.description,
       id: taxCode.id,
       municipalityIbgeCode: taxCode.municipalityIbgeCode,
+      municipalityName: taxCode.municipalityName,
       stateCode: taxCode.stateCode,
       status: taxCode.status,
     };
@@ -1119,9 +1241,14 @@ export async function getAuxiliaryCodeFormPageData(
     auxiliaryCodeId ? "view" : "add",
   );
 
-  const auxiliaryCode = auxiliaryCodeId
-    ? await findAuxiliaryCode(kind, auxiliaryCodeId)
-    : null;
+  const [auxiliaryCode, municipalities] = await Promise.all([
+    auxiliaryCodeId ? findAuxiliaryCode(kind, auxiliaryCodeId) : Promise.resolve(null),
+    kind === "municipalTax"
+      ? prisma.municipality.findMany({
+          orderBy: [{ stateCode: "asc" }, { name: "asc" }, { ibgeCode: "asc" }],
+        })
+      : Promise.resolve([]),
+  ]);
 
   if (auxiliaryCodeId && !auxiliaryCode) {
     redirect(`/crm/servicos/${kind === "municipalTax" ? "ctribmun" : kind === "law116" ? "lei-116" : "nbs"}`);
@@ -1137,6 +1264,7 @@ export async function getAuxiliaryCodeFormPageData(
     auxiliaryCode: mapAuxiliaryFormValues(kind, auxiliaryCode),
     isEditMode: Boolean(auxiliaryCode),
     kind,
+    municipalityOptions: municipalities.map(mapMunicipalityOption),
   };
 }
 
@@ -1153,12 +1281,27 @@ export async function saveAuxiliaryCode(
 
   try {
     if (kind === "municipalTax") {
+      const municipality = await prisma.municipality.findUnique({
+        where: { ibgeCode: input.municipalityIbgeCode.trim() },
+      });
+
+      if (!municipality) {
+        return {
+          ok: false as const,
+          fieldErrors: {
+            municipalityIbgeCode: ["Selecione um codigo de municipio valido."],
+          },
+          message: "Selecione um codigo de municipio valido.",
+        };
+      }
+
       const data = {
         cTribMun: input.code.trim(),
         defaultIssRate: normalizeDecimalInput(input.defaultIssRate),
         description: input.description.trim(),
-        municipalityIbgeCode: input.municipalityIbgeCode.trim(),
-        stateCode: input.stateCode.trim().toUpperCase(),
+        municipalityIbgeCode: municipality.ibgeCode,
+        municipalityName: municipality.name,
+        stateCode: municipality.stateCode,
         status: input.status,
       };
       const saved = isEdit

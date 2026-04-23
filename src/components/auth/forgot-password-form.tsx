@@ -4,7 +4,7 @@ import { Mail, SendHorizontal } from "lucide-react";
 import { useActionState, useState } from "react";
 
 import { forgotPasswordAction } from "@/app/(auth)/actions";
-import { AuthMessage } from "@/components/auth/auth-message";
+import { AuthMessage } from "@/components/feedback/auth-message";
 import { AuthSubmitButton } from "@/components/auth/auth-submit-button";
 import { Input } from "@/components/ui/input";
 import { initialAuthActionState } from "@/lib/auth/form-state";

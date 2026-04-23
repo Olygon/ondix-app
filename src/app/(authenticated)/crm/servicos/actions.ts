@@ -29,16 +29,7 @@ import {
   auxiliaryKindRoutes,
   type ServiceAuxiliaryKind,
 } from "@/lib/services/constants";
-
-function getFormValue(formData: FormData, key: string) {
-  const value = formData.get(key);
-
-  return typeof value === "string" ? value : "";
-}
-
-function getCheckboxValue(formData: FormData, key: string) {
-  return getFormValue(formData, key) === "on";
-}
+import { getCheckboxValue, getFormValue } from "@/lib/helpers/form-data";
 
 function getAuxiliaryRoute(kind: ServiceAuxiliaryKind) {
   return auxiliaryKindRoutes[kind];
@@ -236,6 +227,7 @@ export async function saveAuxiliaryCodeAction(
     defaultIssRate: getFormValue(formData, "defaultIssRate"),
     description: getFormValue(formData, "description"),
     municipalityIbgeCode: getFormValue(formData, "municipalityIbgeCode"),
+    municipalityName: getFormValue(formData, "municipalityName"),
     requiresConstruction: getCheckboxValue(formData, "requiresConstruction"),
     requiresEvent: getCheckboxValue(formData, "requiresEvent"),
     requiresProperty: getCheckboxValue(formData, "requiresProperty"),

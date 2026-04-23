@@ -21,18 +21,7 @@ import {
   getFieldErrors,
   userAccountSchema,
 } from "@/lib/access-management/validators";
-
-function getFormValue(formData: FormData, key: string) {
-  const value = formData.get(key);
-
-  return typeof value === "string" ? value : "";
-}
-
-function getFormFile(formData: FormData, key: string) {
-  const value = formData.get(key);
-
-  return value instanceof File ? value : null;
-}
+import { getBooleanValue, getFormFile, getFormValue } from "@/lib/helpers/form-data";
 
 export async function saveManagedUserAction(
   previousState: UserAccountActionState = initialUserAccountActionState,
@@ -68,7 +57,7 @@ export async function saveManagedUserAction(
     jobTitle: parsedData.data.jobTitle,
     photoFile: getFormFile(formData, "photoFile"),
     phone: parsedData.data.phone,
-    removePhoto: getFormValue(formData, "removePhoto") === "true",
+    removePhoto: getBooleanValue(formData, "removePhoto"),
     shortName: parsedData.data.shortName,
     status: parsedData.data.status as Parameters<typeof saveManagedUser>[0]["status"],
     userId: getFormValue(formData, "userId") || undefined,

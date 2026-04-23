@@ -8,6 +8,8 @@ import {
 } from "../src/lib/access-control/profile-permissions";
 import { governmentCertificateNames } from "../src/lib/company/constants";
 import { createPrismaClient } from "../src/lib/prisma-client";
+import { seedMunicipalities } from "./municipality-seed";
+import { seedServiceClassificationTables } from "./service-classification-seed";
 
 const prisma = createPrismaClient();
 
@@ -330,6 +332,23 @@ async function main() {
 
   await backfillMissingAccessProfilePermissions();
 
+  const municipalitySummary = await seedMunicipalities(prisma);
+  console.info(
+    `Tabela de municipios IBGE importada: ${municipalitySummary.municipalities} municipios.`,
+  );
+
+  const serviceClassificationSummary = await seedServiceClassificationTables(prisma);
+
+  console.info(
+    [
+      "Tabelas auxiliares de servicos importadas:",
+      `${serviceClassificationSummary.law116Codes} codigos Lei 116/03`,
+      `${serviceClassificationSummary.nbsCodes} codigos NBS`,
+      `${serviceClassificationSummary.municipalTaxCodes} cTribMun`,
+      `${serviceClassificationSummary.municipalTaxDuplicates} cTribMun duplicados ignorados`,
+    ].join(" "),
+  );
+
   const companyName = process.env.SEED_COMPANY_NAME;
   const companySlug = process.env.SEED_COMPANY_SLUG;
   const adminName = process.env.SEED_ADMIN_NAME;
@@ -338,7 +357,7 @@ async function main() {
 
   if (!companyName || !companySlug || !adminName || !adminEmail || !adminPassword) {
     console.info(
-      "Seed executado com perfis padrao. Configure SEED_* no .env para criar empresa e usuario inicial.",
+      "Seed executado com perfis padrao e tabelas auxiliares de servicos. Configure SEED_* no .env para criar empresa e usuario inicial.",
     );
     return;
   }

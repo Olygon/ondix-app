@@ -1,8 +1,6 @@
-export type SubscriberCompanyActionState = {
-  fieldErrors?: Record<string, string[] | undefined>;
-  message?: string;
-  status: "idle" | "error" | "success";
-};
+import type { ActionState } from "@/types/action-state";
+
+export type SubscriberCompanyActionState = ActionState;
 
 export const initialSubscriberCompanyActionState: SubscriberCompanyActionState = {
   status: "idle",

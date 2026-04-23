@@ -19,7 +19,7 @@ import {
   saveProvidedServiceAction,
   saveServiceMunicipalTaxRuleAction,
 } from "@/app/(authenticated)/crm/servicos/actions";
-import { AuthMessage } from "@/components/auth/auth-message";
+import { AuthMessage } from "@/components/feedback/auth-message";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -62,6 +62,7 @@ type TaxRuleDraft = {
   issRate: string;
   municipalTaxCodeId: string;
   municipalityIbgeCode: string;
+  municipalityName: string;
   notes: string;
 };
 
@@ -146,6 +147,9 @@ function TaxRuleRow({
             disabled={!canEdit}
           />
         </form>
+      </td>
+      <td className="border-b border-border/60 px-3 py-3 align-top text-muted-foreground">
+        {rule.municipalityName || "-"}
       </td>
       <td className="border-b border-border/60 px-3 py-3 align-top">
         <select
@@ -242,6 +246,7 @@ export function ServiceFormScreen({ data }: ServiceFormScreenProps) {
     issRate: "0",
     municipalTaxCodeId: "",
     municipalityIbgeCode: "",
+    municipalityName: "",
     notes: "",
   });
   const [state, formAction, isSaving] = useActionState(
@@ -336,6 +341,7 @@ export function ServiceFormScreen({ data }: ServiceFormScreenProps) {
       issRate: option?.defaultIssRate ?? current.issRate,
       municipalTaxCodeId: taxCodeId,
       municipalityIbgeCode: option?.municipalityIbgeCode ?? current.municipalityIbgeCode,
+      municipalityName: option?.municipalityName ?? current.municipalityName,
     }));
   }
 
@@ -792,7 +798,8 @@ export function ServiceFormScreen({ data }: ServiceFormScreenProps) {
                   <table className="min-w-full border-separate border-spacing-0">
                     <thead>
                       <tr className="text-left text-[11px] uppercase tracking-[0.16em] text-muted-foreground">
-                        <th className="border-b border-border/80 px-3 py-3 font-semibold">Municipio IBGE</th>
+                        <th className="border-b border-border/80 px-3 py-3 font-semibold">Codigo do municipio</th>
+                        <th className="border-b border-border/80 px-3 py-3 font-semibold">Municipio</th>
                         <th className="border-b border-border/80 px-3 py-3 font-semibold">cTribMun</th>
                         <th className="border-b border-border/80 px-3 py-3 font-semibold">Descricao</th>
                         <th className="border-b border-border/80 px-3 py-3 font-semibold">ISS %</th>
@@ -822,10 +829,10 @@ export function ServiceFormScreen({ data }: ServiceFormScreenProps) {
 
               <form
                 action={taxRuleAction}
-                className="grid gap-4 rounded-[10px] border border-border bg-background/60 p-4 md:grid-cols-6"
+                className="grid gap-4 rounded-[10px] border border-border bg-background/60 p-4 md:grid-cols-8"
               >
                 <input type="hidden" name="serviceId" value={data.service.id} />
-                <label className="flex flex-col gap-2 md:col-span-2">
+                <label className="flex flex-col gap-2 md:col-span-3">
                   <span className="text-xs font-medium text-foreground">cTribMun</span>
                   <select
                     name="municipalTaxCodeId"
@@ -848,9 +855,20 @@ export function ServiceFormScreen({ data }: ServiceFormScreenProps) {
                   ) : null}
                 </label>
 
+                <label className="flex flex-col gap-2 md:col-span-2">
+                  <span className="text-xs font-medium text-foreground">
+                    Municipio
+                  </span>
+                  <Input
+                    value={newRule.municipalityName}
+                    readOnly
+                    disabled={!canSave}
+                  />
+                </label>
+
                 <label className="flex flex-col gap-2">
                   <span className="text-xs font-medium text-foreground">
-                    Municipio IBGE
+                    Codigo do município
                   </span>
                   <Input
                     name="municipalityIbgeCode"
@@ -892,7 +910,7 @@ export function ServiceFormScreen({ data }: ServiceFormScreenProps) {
                   <span className="text-xs font-medium text-foreground">Padrao</span>
                 </label>
 
-                <label className="flex flex-col gap-2 md:col-span-5">
+                <label className="flex flex-col gap-2 md:col-span-7">
                   <span className="text-xs font-medium text-foreground">Notas</span>
                   <Input
                     name="notes"

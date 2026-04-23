@@ -55,6 +55,14 @@ export type ServiceOption = {
 export type MunicipalTaxCodeOption = ServiceOption & {
   defaultIssRate: string;
   municipalityIbgeCode: string;
+  municipalityName: string;
+  stateCode: string;
+};
+
+export type MunicipalityOption = {
+  ibgeCode: string;
+  label: string;
+  name: string;
   stateCode: string;
 };
 
@@ -66,6 +74,7 @@ export type ServiceMunicipalTaxRuleRow = {
   issRate: string;
   municipalTaxCodeId: string;
   municipalityIbgeCode: string;
+  municipalityName: string;
   notes: string;
 };
 
@@ -126,6 +135,7 @@ export type AuxiliaryCodeListRow = {
   description: string;
   id: string;
   municipalityIbgeCode?: string;
+  municipalityName?: string;
   stateCode?: string;
   requiresConstruction?: boolean;
   requiresEvent?: boolean;
@@ -150,6 +160,7 @@ export type AuxiliaryCodeFormValues = {
   description: string;
   id: string | null;
   municipalityIbgeCode: string;
+  municipalityName: string;
   stateCode: string;
   requiresConstruction: boolean;
   requiresEvent: boolean;
@@ -164,4 +175,5 @@ export type AuxiliaryCodeFormPageData = {
   auxiliaryCode: AuxiliaryCodeFormValues;
   isEditMode: boolean;
   kind: ServiceAuxiliaryKind;
+  municipalityOptions: MunicipalityOption[];
 };

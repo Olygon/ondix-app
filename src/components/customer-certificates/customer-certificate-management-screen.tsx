@@ -30,7 +30,7 @@ import {
   updateCertificateAction,
   validateCertificateAction,
 } from "@/app/(authenticated)/customers/[customerId]/certificates/actions";
-import { AuthMessage } from "@/components/auth/auth-message";
+import { AuthMessage } from "@/components/feedback/auth-message";
 import { Button } from "@/components/ui/button";
 import {
   Card,

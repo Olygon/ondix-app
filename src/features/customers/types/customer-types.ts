@@ -4,7 +4,8 @@ import type { PermissionAccessState } from "@/lib/access-control/permissions";
 import type {
   CustomerSortDirection,
   CustomerSortField,
-} from "@/lib/customer/constants";
+} from "@/features/customers/constants/customer-constants";
+import type { PaginationData } from "@/types/pagination";
 
 export type CustomerListFilters = {
   contractDuePeriod: string;
@@ -36,12 +37,7 @@ export type CustomerListPageData = {
   companyName: string;
   customers: CustomerListRow[];
   filters: CustomerListFilters;
-  pagination: {
-    page: number;
-    pageSize: number;
-    totalItems: number;
-    totalPages: number;
-  };
+  pagination: PaginationData;
 };
 
 export type CustomerFormValues = {

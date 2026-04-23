@@ -1,6 +1,7 @@
 "use client";
 
 import { useActionState, useEffect, useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
   Eraser,
@@ -13,8 +14,8 @@ import {
   ArrowUpDown,
 } from "lucide-react";
 
-import { deleteCustomerAction } from "@/app/(authenticated)/crm/cliente/actions";
-import { AuthMessage } from "@/components/auth/auth-message";
+import { deleteCustomerAction } from "@/features/customers/actions";
+import { AuthMessage } from "@/components/feedback/auth-message";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -34,13 +35,16 @@ import {
   customerTypeLabels,
   customerTypeOptions,
   type CustomerSortField,
-} from "@/lib/customer/constants";
-import { formatCpfCnpj } from "@/lib/customer/formatters";
+} from "@/features/customers/constants/customer-constants";
+import { formatCpfCnpj } from "@/lib/formatters/brazil";
 import {
   initialCustomerCollectionActionState,
-} from "@/lib/customer/form-state";
-import type { CustomerListFilters, CustomerListPageData } from "@/lib/customer/types";
-import { cn } from "@/lib/utils";
+} from "@/features/customers/types/customer-form-state";
+import type {
+  CustomerListFilters,
+  CustomerListPageData,
+} from "@/features/customers/types/customer-types";
+import { cn } from "@/lib/helpers/cn";
 
 const selectClassName =
   "h-11 w-full rounded-[6px] border border-border bg-card px-3 text-[12px] text-foreground shadow-sm outline-none transition-colors duration-150 focus:border-primary/30 focus:ring-2 focus:ring-primary/15 disabled:cursor-not-allowed disabled:opacity-60";
@@ -48,6 +52,8 @@ const actionIconClassName =
   "inline-flex h-8 w-8 items-center justify-center rounded-[6px] border border-border bg-background/60 text-muted-foreground transition-colors hover:border-primary/20 hover:text-primary disabled:cursor-not-allowed disabled:opacity-45";
 const deleteActionIconClassName =
   "inline-flex h-8 w-8 items-center justify-center rounded-[6px] border border-red-700/70 bg-red-700 font-semibold text-white transition-colors hover:border-red-800 hover:bg-red-800 disabled:cursor-not-allowed disabled:border-red-300/60 disabled:bg-red-300/70 disabled:text-white/90 disabled:opacity-45 dark:border-red-500 dark:bg-red-500 dark:hover:border-red-400 dark:hover:bg-red-400 [&_svg]:stroke-[2.35]";
+const addCustomerLinkClassName =
+  "inline-flex h-11 items-center justify-center gap-2.5 rounded-[12px] bg-primary px-4 font-medium tracking-[-0.01em] text-primary-foreground shadow-[0_28px_60px_-32px_rgba(242,74,0,0.9)] transition-all duration-200 hover:-translate-y-0.5 hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30 [&_span]:text-primary-foreground [&_svg]:text-primary-foreground";
 
 type CustomerListScreenProps = {
   data: CustomerListPageData;
@@ -198,15 +204,25 @@ export function CustomerListScreen({ data }: CustomerListScreenProps) {
         title="Clientes"
         description={`Gerencie os clientes cadastrados no sistema para a empresa ativa ${data.companyName}.`}
         actions={
-          <Button
-            icon={Plus}
-            type="button"
-            disabled={!canAdd}
-            title={canAdd ? "icionar cliente" : "Sem permissao para adicionar clientes"}
-            onClick={() => router.push("/crm/cliente/novo")}
-          >
-            Adicionar
-          </Button>
+          canAdd ? (
+            <Link
+              href="/crm/cliente/novo"
+              title="Adicionar cliente"
+              className={addCustomerLinkClassName}
+            >
+              <Plus className="h-4 w-4 shrink-0" />
+              <span className="text-[12px] leading-none">Adicionar</span>
+            </Link>
+          ) : (
+            <Button
+              icon={Plus}
+              type="button"
+              disabled
+              title="Sem permissao para adicionar clientes"
+            >
+              Adicionar
+            </Button>
+          )
         }
       />
 

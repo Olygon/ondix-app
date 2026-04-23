@@ -30,7 +30,7 @@ import {
   monthNames,
   shortMonthNames,
 } from "@/lib/active-period/utils";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/helpers/cn";
 
 type AppHeaderProps = {
   activePeriod: ActivePeriod;

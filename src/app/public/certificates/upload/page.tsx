@@ -1,6 +1,6 @@
 import Image from "next/image";
 
-import { AuthMessage } from "@/components/auth/auth-message";
+import { AuthMessage } from "@/components/feedback/auth-message";
 import {
   Card,
   CardContent,

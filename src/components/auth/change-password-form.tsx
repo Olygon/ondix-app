@@ -4,7 +4,7 @@ import { ShieldCheck } from "lucide-react";
 import { useActionState, useMemo, useState } from "react";
 
 import { changePasswordAction } from "@/app/(auth)/actions";
-import { AuthMessage } from "@/components/auth/auth-message";
+import { AuthMessage } from "@/components/feedback/auth-message";
 import { PasswordField } from "@/components/auth/password-field";
 import { AuthSubmitButton } from "@/components/auth/auth-submit-button";
 import {
@@ -13,7 +13,7 @@ import {
   PASSWORD_MIN_LENGTH,
 } from "@/lib/auth/password-policy";
 import { initialAuthActionState } from "@/lib/auth/form-state";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/helpers/cn";
 
 type ChangePasswordFormProps = {
   email: string;

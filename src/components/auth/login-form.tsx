@@ -5,7 +5,7 @@ import { ArrowRight, LogIn, Mail } from "lucide-react";
 import { useActionState, useEffect, useState } from "react";
 
 import { loginAction } from "@/app/(auth)/actions";
-import { AuthMessage } from "@/components/auth/auth-message";
+import { AuthMessage } from "@/components/feedback/auth-message";
 import { PasswordField } from "@/components/auth/password-field";
 import { AuthSubmitButton } from "@/components/auth/auth-submit-button";
 import { Input } from "@/components/ui/input";

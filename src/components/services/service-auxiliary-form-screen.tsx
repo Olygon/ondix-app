@@ -8,7 +8,7 @@ import {
   inactivateAuxiliaryCodeAction,
   saveAuxiliaryCodeAction,
 } from "@/app/(authenticated)/crm/servicos/actions";
-import { AuthMessage } from "@/components/auth/auth-message";
+import { AuthMessage } from "@/components/feedback/auth-message";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -29,7 +29,6 @@ import {
   initialServiceCollectionActionState,
   initialServiceFormActionState,
 } from "@/lib/services/form-state";
-import { brazilianStates } from "@/lib/company/constants";
 import type {
   AuxiliaryCodeFormPageData,
   AuxiliaryCodeFormValues,
@@ -41,8 +40,7 @@ const fieldMessageClassName = "text-xs font-semibold text-red-600 dark:text-red-
 const deleteButtonClassName =
   "border-red-700/70 bg-red-700 font-semibold text-white hover:border-red-800 hover:bg-red-800 hover:text-white dark:border-red-500 dark:bg-red-500 dark:hover:border-red-400 dark:hover:bg-red-400 dark:hover:text-white [&_svg]:stroke-[2.35]";
 const defaultCardGridClassName = "grid gap-4 md:grid-cols-6 xl:grid-cols-12";
-const municipalTaxCardGridClassName =
-  "grid gap-4 md:grid-cols-[minmax(0,1fr)_80px_180px_140px_160px] xl:grid-cols-[minmax(0,1fr)_88px_190px_150px_170px]";
+const municipalTaxCardGridClassName = "grid gap-4 md:grid-cols-6 xl:grid-cols-12";
 
 type ServiceAuxiliaryFormScreenProps = {
   data: AuxiliaryCodeFormPageData;
@@ -60,6 +58,13 @@ function formatIssRateInput(value: string) {
     minimumFractionDigits: 2,
     useGrouping: false,
   }).format(parseDecimalInput(value));
+}
+
+function getMunicipalityOption(
+  options: AuxiliaryCodeFormPageData["municipalityOptions"],
+  ibgeCode: string,
+) {
+  return options.find((option) => option.ibgeCode === ibgeCode);
 }
 
 export function ServiceAuxiliaryFormScreen({
@@ -111,6 +116,17 @@ export function ServiceAuxiliaryFormScreen({
     setFormValues((current) => ({
       ...current,
       [name]: value,
+    }));
+  }
+
+  function handleMunicipalityChange(ibgeCode: string) {
+    const municipality = getMunicipalityOption(data.municipalityOptions, ibgeCode);
+
+    setFormValues((current) => ({
+      ...current,
+      municipalityIbgeCode: ibgeCode,
+      municipalityName: municipality?.name ?? "",
+      stateCode: municipality?.stateCode ?? "",
     }));
   }
 
@@ -221,18 +237,24 @@ export function ServiceAuxiliaryFormScreen({
           </CardHeader>
           <CardContent className={cardGridClassName}>
             {data.kind === "municipalTax" ? (
-              <label className="flex flex-col gap-2">
+              <label className="flex flex-col gap-2 md:col-span-3 xl:col-span-4">
                 <span className="text-xs font-medium text-foreground">
-                  Municipio IBGE *
+                  Codigo do municipio *
                 </span>
-                <Input
+                <select
                   name="municipalityIbgeCode"
+                  className={selectClassName}
                   value={formValues.municipalityIbgeCode}
                   disabled={isReadOnly}
-                  onChange={(event) =>
-                    updateField("municipalityIbgeCode", event.target.value)
-                  }
-                />
+                  onChange={(event) => handleMunicipalityChange(event.target.value)}
+                >
+                  <option value="">Selecione</option>
+                  {data.municipalityOptions.map((municipality) => (
+                    <option key={municipality.ibgeCode} value={municipality.ibgeCode}>
+                      {municipality.label}
+                    </option>
+                  ))}
+                </select>
                 {fieldError("municipalityIbgeCode") ? (
                   <span className={fieldMessageClassName}>
                     {fieldError("municipalityIbgeCode")}
@@ -242,22 +264,31 @@ export function ServiceAuxiliaryFormScreen({
             ) : null}
 
             {data.kind === "municipalTax" ? (
-              <label className="flex flex-col gap-2">
+              <label className="flex flex-col gap-2 md:col-span-2 xl:col-span-3">
+                <span className="text-xs font-medium text-foreground">
+                  Municipio *
+                </span>
+                <Input
+                  name="municipalityName"
+                  value={formValues.municipalityName}
+                  readOnly
+                />
+                {fieldError("municipalityName") ? (
+                  <span className={fieldMessageClassName}>
+                    {fieldError("municipalityName")}
+                  </span>
+                ) : null}
+              </label>
+            ) : null}
+
+            {data.kind === "municipalTax" ? (
+              <label className="flex flex-col gap-2 md:col-span-1 xl:col-span-1">
                 <span className="text-xs font-medium text-foreground">UF *</span>
-                <select
+                <Input
                   name="stateCode"
-                  className={selectClassName}
                   value={formValues.stateCode}
-                  disabled={isReadOnly}
-                  onChange={(event) => updateField("stateCode", event.target.value)}
-                >
-                  <option value="">Selecione</option>
-                  {brazilianStates.map((stateOption) => (
-                    <option key={stateOption.code} value={stateOption.code}>
-                      {stateOption.code}
-                    </option>
-                  ))}
-                </select>
+                  readOnly
+                />
                 {fieldError("stateCode") ? (
                   <span className={fieldMessageClassName}>
                     {fieldError("stateCode")}
@@ -269,7 +300,7 @@ export function ServiceAuxiliaryFormScreen({
             <label
               className={
                 data.kind === "municipalTax"
-                  ? "flex flex-col gap-2"
+                  ? "flex flex-col gap-2 md:col-span-2 xl:col-span-2"
                   : "flex flex-col gap-2 md:col-span-3"
               }
             >
@@ -298,7 +329,7 @@ export function ServiceAuxiliaryFormScreen({
                 />
               </label>
             ) : (
-              <label className="flex flex-col gap-2">
+              <label className="flex flex-col gap-2 md:col-span-2 xl:col-span-2">
                 <span className="text-xs font-medium text-foreground">
                   Aliquota padrao ISS %
                 </span>
@@ -327,7 +358,7 @@ export function ServiceAuxiliaryFormScreen({
             <label
               className={
                 data.kind === "municipalTax"
-                  ? "flex flex-col gap-2"
+                  ? "flex flex-col gap-2 md:col-span-2 xl:col-span-1"
                   : "flex flex-col gap-2 md:col-span-3"
               }
             >
@@ -355,7 +386,7 @@ export function ServiceAuxiliaryFormScreen({
             <label
               className={
                 data.kind === "municipalTax"
-                  ? "flex flex-col gap-2 md:col-span-5 xl:col-span-5"
+                  ? "flex flex-col gap-2 md:col-span-6 xl:col-span-12"
                   : "flex flex-col gap-2 md:col-span-6 xl:col-span-12"
               }
             >

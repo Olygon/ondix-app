@@ -7,7 +7,7 @@ import {
   ChevronsRight,
 } from "lucide-react";
 
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/helpers/cn";
 
 type ListPaginationProps = {
   className?: string;

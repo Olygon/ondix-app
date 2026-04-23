@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-import { isValidCnpj, onlyDigits } from "@/lib/company/formatters";
+import { isValidCnpj, onlyDigits } from "@/lib/formatters/brazil";
 
 const optionalTrimmedString = z
   .string()

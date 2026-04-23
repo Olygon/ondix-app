@@ -40,8 +40,7 @@ import type {
   CommercialProposalListRow,
   CommercialProposalServiceOption,
 } from "@/lib/commercial-proposals/types";
-import { formatCpfCnpj } from "@/lib/customer/formatters";
-import { formatDateBr } from "@/lib/company/formatters";
+import { formatCpfCnpj, formatDateBr } from "@/lib/formatters/brazil";
 import { prisma } from "@/lib/db";
 
 export type CommercialProposalSearchParams = Record<

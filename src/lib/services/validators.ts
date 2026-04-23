@@ -71,7 +71,7 @@ export const serviceMunicipalTaxRuleSchema = z.object({
   municipalityIbgeCode: z
     .string()
     .trim()
-    .regex(/^\d{7}$/, "Informe um codigo IBGE municipal com 7 digitos."),
+    .regex(/^\d{7}$/, "Informe um codigo do municipio com 7 digitos."),
   notes: optionalTrimmedString,
 });
 
@@ -99,7 +99,8 @@ export const municipalTaxCodeSchema = z.object({
   municipalityIbgeCode: z
     .string()
     .trim()
-    .regex(/^\d{7}$/, "Informe um codigo IBGE municipal com 7 digitos."),
+    .regex(/^\d{7}$/, "Informe um codigo do municipio com 7 digitos."),
+  municipalityName: z.string().trim().min(1, "Informe o nome do municipio."),
   stateCode: z
     .string()
     .trim()

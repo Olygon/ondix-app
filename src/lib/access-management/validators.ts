@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-import { onlyDigits } from "@/lib/company/formatters";
+import { onlyDigits } from "@/lib/formatters/brazil";
 import {
   accessProfileTierOptions,
   profileStatusOptions,

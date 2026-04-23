@@ -2,7 +2,7 @@
 
 import { RotateCcw } from "lucide-react";
 
-import { AuthMessage } from "@/components/auth/auth-message";
+import { AuthMessage } from "@/components/feedback/auth-message";
 import { Button } from "@/components/ui/button";
 import {
   Card,

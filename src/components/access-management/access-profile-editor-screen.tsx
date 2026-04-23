@@ -8,7 +8,7 @@ import {
   deleteAccessProfileAction,
   saveAccessProfileAction,
 } from "@/app/(authenticated)/assinante/gestao-acessos/actions";
-import { AuthMessage } from "@/components/auth/auth-message";
+import { AuthMessage } from "@/components/feedback/auth-message";
 import { Button } from "@/components/ui/button";
 import {
   Card,

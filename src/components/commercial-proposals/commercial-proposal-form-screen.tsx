@@ -20,7 +20,7 @@ import {
   saveCommercialProposalAction,
   sendCommercialProposalAction,
 } from "@/app/(authenticated)/comercial/proposta-comercial/actions";
-import { AuthMessage } from "@/components/auth/auth-message";
+import { AuthMessage } from "@/components/feedback/auth-message";
 import { Button } from "@/components/ui/button";
 import {
   Card,

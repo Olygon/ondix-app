@@ -1,5 +1,5 @@
 import type { NavigationGroup } from "@/lib/navigation";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/helpers/cn";
 
 import { SidebarMenuItem } from "@/components/layout/sidebar-menu-item";
 

@@ -15,7 +15,7 @@ import {
   formatDateTimeBr,
   formatPostalCode,
   onlyDigits,
-} from "@/lib/company/formatters";
+} from "@/lib/formatters/brazil";
 import type { SubscriberCompanyPageData } from "@/lib/company/types";
 import { prisma } from "@/lib/db";
 import { cancelSubscriberSubscription } from "@/lib/subscription/service";

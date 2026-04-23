@@ -467,6 +467,7 @@ model ServiceNbsCode {
 model MunicipalTaxCode {
   id                   String                    @id @default(cuid())
   municipalityIbgeCode String
+  municipalityName     String                    @default("")
   stateCode            String                    @default("")
   cTribMun             String
   description          String                    @db.Text
@@ -478,6 +479,17 @@ model MunicipalTaxCode {
 
   @@unique([municipalityIbgeCode, cTribMun])
   @@index([municipalityIbgeCode, stateCode, status])
+}
+
+model Municipality {
+  ibgeCode          String             @id
+  name              String
+  stateCode         String
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+
+  @@index([stateCode, name])
+  @@index([name])
 }
 
 model ProvidedService {
