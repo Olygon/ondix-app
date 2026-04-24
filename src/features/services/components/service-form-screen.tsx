@@ -18,7 +18,7 @@ import {
   deleteServiceMunicipalTaxRuleAction,
   saveProvidedServiceAction,
   saveServiceMunicipalTaxRuleAction,
-} from "@/app/(authenticated)/crm/servicos/actions";
+} from "@/features/services/actions";
 import { AuthMessage } from "@/components/feedback/auth-message";
 import { Button } from "@/components/ui/button";
 import {
@@ -31,17 +31,17 @@ import {
 import { Input } from "@/components/ui/input";
 import { PageHeader } from "@/components/ui/page-header";
 import { Textarea } from "@/components/ui/textarea";
-import { providedServiceStatusOptions } from "@/lib/services/constants";
+import { providedServiceStatusOptions } from "@/features/services/constants/service-constants";
 import {
   initialServiceCollectionActionState,
   initialServiceFormActionState,
-} from "@/lib/services/form-state";
+} from "@/features/services/types/service-form-state";
 import type {
   MunicipalTaxCodeOption,
   ProvidedServiceFormPageData,
   ProvidedServiceFormValues,
   ServiceMunicipalTaxRuleRow,
-} from "@/lib/services/types";
+} from "@/features/services/types/service-types";
 
 const selectClassName =
   "h-11 w-full rounded-[6px] border border-border bg-card px-3 text-[12px] text-foreground shadow-sm outline-none transition-colors duration-150 focus:border-primary/30 focus:ring-2 focus:ring-primary/15 disabled:cursor-not-allowed disabled:opacity-60";

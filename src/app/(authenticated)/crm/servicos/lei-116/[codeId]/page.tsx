@@ -1,4 +1,4 @@
-import { ServiceAuxiliaryFormScreen } from "@/components/services/service-auxiliary-form-screen";
+import { ServiceAuxiliaryFormScreen } from "@/features/services/components/service-auxiliary-form-screen";
 import { Breadcrumb, type BreadcrumbItem } from "@/components/ui/breadcrumb";
 import { getAuxiliaryCodeFormPageData } from "@/lib/services/service";
 

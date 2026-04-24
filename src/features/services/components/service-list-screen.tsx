@@ -32,11 +32,11 @@ import {
   providedServiceStatusOptions,
   providedServiceStatusTones,
   type ProvidedServiceSortField,
-} from "@/lib/services/constants";
+} from "@/features/services/constants/service-constants";
 import type {
   ProvidedServiceListFilters,
   ProvidedServiceListPageData,
-} from "@/lib/services/types";
+} from "@/features/services/types/service-types";
 import { cn } from "@/lib/helpers/cn";
 
 const selectClassName =

@@ -1,4 +1,4 @@
-import { ServiceFormScreen } from "@/components/services/service-form-screen";
+import { ServiceFormScreen } from "@/features/services/components/service-form-screen";
 import { Breadcrumb, type BreadcrumbItem } from "@/components/ui/breadcrumb";
 import { getProvidedServiceFormPageData } from "@/lib/services/service";
 

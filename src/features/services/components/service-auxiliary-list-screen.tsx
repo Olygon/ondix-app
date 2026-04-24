@@ -12,7 +12,7 @@ import {
   Trash2,
 } from "lucide-react";
 
-import { inactivateAuxiliaryCodeAction } from "@/app/(authenticated)/crm/servicos/actions";
+import { inactivateAuxiliaryCodeAction } from "@/features/services/actions";
 import { AuthMessage } from "@/components/feedback/auth-message";
 import { Button } from "@/components/ui/button";
 import {
@@ -33,14 +33,14 @@ import {
   entityStatusOptions,
   entityStatusTones,
   type AuxiliaryCodeSortField,
-} from "@/lib/services/constants";
+} from "@/features/services/constants/service-constants";
 import {
   initialServiceCollectionActionState,
-} from "@/lib/services/form-state";
+} from "@/features/services/types/service-form-state";
 import type {
   AuxiliaryCodeListFilters,
   AuxiliaryCodeListPageData,
-} from "@/lib/services/types";
+} from "@/features/services/types/service-types";
 import { cn } from "@/lib/helpers/cn";
 
 const selectClassName =

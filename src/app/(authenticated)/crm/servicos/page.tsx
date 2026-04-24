@@ -1,4 +1,4 @@
-import { ServiceListScreen } from "@/components/services/service-list-screen";
+import { ServiceListScreen } from "@/features/services/components/service-list-screen";
 import { Breadcrumb, type BreadcrumbItem } from "@/components/ui/breadcrumb";
 import {
   getProvidedServiceListPageData,

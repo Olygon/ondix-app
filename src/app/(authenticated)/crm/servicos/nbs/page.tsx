@@ -1,4 +1,4 @@
-import { ServiceAuxiliaryListScreen } from "@/components/services/service-auxiliary-list-screen";
+import { ServiceAuxiliaryListScreen } from "@/features/services/components/service-auxiliary-list-screen";
 import { Breadcrumb, type BreadcrumbItem } from "@/components/ui/breadcrumb";
 import {
   getAuxiliaryCodeListPageData,
