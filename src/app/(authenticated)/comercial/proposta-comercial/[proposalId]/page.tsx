@@ -1,4 +1,4 @@
-import { CommercialProposalFormScreen } from "@/components/commercial-proposals/commercial-proposal-form-screen";
+import { CommercialProposalFormScreen } from "@/features/commercial-proposals/components/commercial-proposal-form-screen";
 import { Breadcrumb, type BreadcrumbItem } from "@/components/ui/breadcrumb";
 import { getCommercialProposalFormPageData } from "@/lib/commercial-proposals/service";
 

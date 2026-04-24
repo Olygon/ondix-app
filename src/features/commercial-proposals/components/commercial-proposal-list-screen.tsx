@@ -19,7 +19,7 @@ import {
   deleteCommercialProposalAction,
   generateContractFromCommercialProposalAction,
   inactivateCommercialProposalAction,
-} from "@/app/(authenticated)/comercial/proposta-comercial/actions";
+} from "@/features/commercial-proposals/actions";
 import { AuthMessage } from "@/components/feedback/auth-message";
 import { Button } from "@/components/ui/button";
 import {
@@ -39,14 +39,14 @@ import {
   commercialProposalStatusOptions,
   commercialProposalStatusTones,
   type CommercialProposalSortField,
-} from "@/lib/commercial-proposals/constants";
+} from "@/features/commercial-proposals/constants/commercial-proposal-constants";
 import {
   initialCommercialProposalCollectionActionState,
-} from "@/lib/commercial-proposals/form-state";
+} from "@/features/commercial-proposals/types/commercial-proposal-form-state";
 import type {
   CommercialProposalListFilters,
   CommercialProposalListPageData,
-} from "@/lib/commercial-proposals/types";
+} from "@/features/commercial-proposals/types/commercial-proposal-types";
 import { cn } from "@/lib/helpers/cn";
 
 const selectClassName =

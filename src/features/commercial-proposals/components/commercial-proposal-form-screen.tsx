@@ -19,7 +19,7 @@ import {
   generateContractFromCommercialProposalAction,
   saveCommercialProposalAction,
   sendCommercialProposalAction,
-} from "@/app/(authenticated)/comercial/proposta-comercial/actions";
+} from "@/features/commercial-proposals/actions";
 import { AuthMessage } from "@/components/feedback/auth-message";
 import { Button } from "@/components/ui/button";
 import {
@@ -39,16 +39,16 @@ import {
   commercialProposalPaymentMethodOptions,
   commercialProposalStatusLabels,
   commercialProposalStatusTones,
-} from "@/lib/commercial-proposals/constants";
+} from "@/features/commercial-proposals/constants/commercial-proposal-constants";
 import {
   initialCommercialProposalActionState,
   initialCommercialProposalCollectionActionState,
-} from "@/lib/commercial-proposals/form-state";
+} from "@/features/commercial-proposals/types/commercial-proposal-form-state";
 import type {
   CommercialProposalFormPageData,
   CommercialProposalFormValues,
   CommercialProposalItemFormValues,
-} from "@/lib/commercial-proposals/types";
+} from "@/features/commercial-proposals/types/commercial-proposal-types";
 
 const selectClassName =
   "h-11 w-full rounded-[6px] border border-border bg-card px-3 text-[12px] text-foreground shadow-sm outline-none transition-colors duration-150 focus:border-primary/30 focus:ring-2 focus:ring-primary/15 disabled:cursor-not-allowed disabled:opacity-60";
