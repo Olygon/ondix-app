@@ -11,6 +11,7 @@ import { requirePermission } from "@/lib/access-control/permission-service";
 import { RESOURCE_CODES } from "@/lib/access-control/resources";
 import { prisma } from "@/lib/db";
 import { commercialProposalBaseRoute } from "@/features/commercial-proposals/constants/commercial-proposal-constants";
+import { normalizeDecimalInput } from "@/lib/helpers/number";
 import {
   formatProposalCode,
   isCurrentUserApprovalAllowed,
@@ -74,12 +75,6 @@ function normalizeNullable(value?: string | null) {
   const trimmed = value?.trim() ?? "";
 
   return trimmed || null;
-}
-
-function normalizeDecimalInput(value?: string | null) {
-  const normalized = value?.trim().replace(/\./g, "").replace(",", ".") ?? "";
-
-  return normalized || "0";
 }
 
 function calculateProposal(input: CommercialProposalWriteInput) {

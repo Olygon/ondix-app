@@ -23,13 +23,11 @@ import type {
   AuxiliaryCodeListFilters,
   ProvidedServiceListFilters,
 } from "@/features/services/types/service-types";
+import type { DecimalLike } from "@/lib/helpers/number";
+import { toNumber } from "@/lib/helpers/number";
+import { toCurrency } from "@/lib/helpers/money";
 
 export type ServiceSearchParams = Record<string, string | string[] | undefined>;
-
-type DecimalLike = {
-  toNumber?: () => number;
-  toString: () => string;
-};
 
 const serviceStatusValues = new Set(providedServiceStatusOptions.map((item) => item.value));
 const serviceSortValues = new Set<string>(providedServiceSortFields);
@@ -78,28 +76,7 @@ export function parseServiceAuxiliaryKind(value: string): ServiceAuxiliaryKind {
   return auxiliaryKindValues.has(value) ? (value as ServiceAuxiliaryKind) : "law116";
 }
 
-function toNumber(value?: DecimalLike | number | string | null) {
-  if (!value) {
-    return 0;
-  }
-
-  if (typeof value === "number") {
-    return value;
-  }
-
-  if (typeof value === "string") {
-    return Number(value);
-  }
-
-  return value.toNumber?.() ?? Number(value.toString());
-}
-
-export function toCurrency(value?: DecimalLike | number | string | null) {
-  return new Intl.NumberFormat("pt-BR", {
-    currency: "BRL",
-    style: "currency",
-  }).format(toNumber(value));
-}
+export { toCurrency, toNumber };
 
 export function toDecimalInput(value?: DecimalLike | number | string | null) {
   return new Intl.NumberFormat("pt-BR", {

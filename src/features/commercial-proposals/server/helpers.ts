@@ -14,16 +14,15 @@ import {
   type CommercialProposalSortField,
 } from "@/features/commercial-proposals/constants/commercial-proposal-constants";
 import type { CommercialProposalListFilters } from "@/features/commercial-proposals/types/commercial-proposal-types";
+import { normalizeDateInput } from "@/lib/helpers/date";
+import type { DecimalLike } from "@/lib/helpers/number";
+import { toNumber } from "@/lib/helpers/number";
+import { roundMoney, toCurrency } from "@/lib/helpers/money";
 
 export type CommercialProposalSearchParams = Record<
   string,
   string | string[] | undefined
 >;
-
-type DecimalLike = {
-  toNumber?: () => number;
-  toString: () => string;
-};
 
 type CommercialProposalPermissionContext = {
   accessProfile: {
@@ -69,14 +68,7 @@ function parseSort(value: string): CommercialProposalSortField {
     : "createdAt";
 }
 
-export function normalizeDateInput(value: string) {
-  const [year, month, day] = value.split("-").map(Number);
-  const date = new Date(year, (month || 1) - 1, day || 1);
-
-  date.setHours(0, 0, 0, 0);
-
-  return date;
-}
+export { normalizeDateInput, roundMoney, toCurrency, toNumber };
 
 export function addDays(date: Date, days: number) {
   const nextDate = new Date(date);
@@ -104,39 +96,12 @@ export function toDateInput(value?: Date | string | null) {
   return `${year}-${month}-${day}`;
 }
 
-export function toNumber(value?: DecimalLike | number | string | null) {
-  if (!value) {
-    return 0;
-  }
-
-  if (typeof value === "number") {
-    return value;
-  }
-
-  if (typeof value === "string") {
-    return Number(value);
-  }
-
-  return value.toNumber?.() ?? Number(value.toString());
-}
-
-export function toCurrency(value?: DecimalLike | number | string | null) {
-  return new Intl.NumberFormat("pt-BR", {
-    currency: "BRL",
-    style: "currency",
-  }).format(toNumber(value));
-}
-
 export function toDecimalInput(value?: DecimalLike | number | string | null) {
   return new Intl.NumberFormat("pt-BR", {
     maximumFractionDigits: 4,
     minimumFractionDigits: 0,
     useGrouping: false,
   }).format(toNumber(value));
-}
-
-export function roundMoney(value: number) {
-  return Math.round((value + Number.EPSILON) * 100) / 100;
 }
 
 export function moneyString(value: number) {
