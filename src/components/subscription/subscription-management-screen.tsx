@@ -18,7 +18,7 @@ import {
 import {
   cancelSubscriberSubscriptionAction,
   prepareSubscriptionPaymentAction,
-} from "@/app/(authenticated)/assinante/gestao-assinatura/actions";
+} from "@/features/subscription/actions";
 import { AuthMessage } from "@/components/feedback/auth-message";
 import { Button } from "@/components/ui/button";
 import {
@@ -33,18 +33,18 @@ import { StatusBadge } from "@/components/ui/status-badge";
 import { cn } from "@/lib/helpers/cn";
 import {
   initialSubscriptionActionState,
-} from "@/lib/subscription/form-state";
+} from "@/features/subscription/types/subscription-form-state";
 import {
   invoiceStatusLabels,
   invoiceStatusTones,
   paymentMethodLabels,
   subscriptionStatusLabels,
   subscriptionStatusTones,
-} from "@/lib/subscription/constants";
+} from "@/features/subscription/constants/subscription-constants";
 import type {
   SubscriptionInvoiceRow,
   SubscriptionManagementPageData,
-} from "@/lib/subscription/types";
+} from "@/features/subscription/types/subscription-types";
 
 type SubscriptionManagementScreenProps = {
   data: SubscriptionManagementPageData;

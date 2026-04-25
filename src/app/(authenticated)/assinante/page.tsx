@@ -1,5 +1,5 @@
 import { Breadcrumb, type BreadcrumbItem } from "@/components/ui/breadcrumb";
-import { SubscriberCompanyScreen } from "@/components/subscriber/subscriber-company-screen";
+import { SubscriberCompanyScreen } from "@/features/subscriber-company/components/subscriber-company-screen";
 import { getSubscriberCompanyPageData } from "@/lib/company/service";
 
 const breadcrumbItems: BreadcrumbItem[] = [
