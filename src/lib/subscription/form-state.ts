@@ -1,9 +1,1 @@
-export type SubscriptionActionState = {
-  message?: string;
-  paymentAttemptId?: string;
-  status: "idle" | "error" | "success";
-};
-
-export const initialSubscriptionActionState: SubscriptionActionState = {
-  status: "idle",
-};
+export * from "@/features/subscription/types/subscription-form-state";

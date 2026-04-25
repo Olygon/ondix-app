@@ -4,21 +4,17 @@ import type {
   Company,
   SubscriptionInvoice,
   SubscriptionInvoiceStatus,
-  SubscriptionPaymentMethod,
   SubscriptionStatus,
 } from "@prisma/client";
 
-import {
-  getPermissionAccess as getPermissionAccessFromMatrix,
-} from "@/lib/access-control/permissions";
-import { requirePermission } from "@/lib/access-control/permission-service";
-import { RESOURCE_CODES } from "@/lib/access-control/resources";
 import { formatDateBr } from "@/lib/formatters/brazil";
 import { prisma } from "@/lib/db";
 import { payableInvoiceStatuses } from "@/lib/subscription/constants";
+import { getSubscriptionManagementPageDataOrchestration } from "@/features/subscription/server/orchestration/subscription-management";
+import { cancelSubscriberSubscriptionOrchestration } from "@/features/subscription/server/orchestration/cancel-subscriber-subscription";
+import { prepareSubscriptionPaymentOrchestration } from "@/features/subscription/server/orchestration/prepare-subscription-payment";
 import type {
   SubscriptionInvoiceRow,
-  SubscriptionManagementPageData,
   SubscriptionNextCharge,
 } from "@/lib/subscription/types";
 
@@ -226,168 +222,30 @@ function findNextCharge(invoices: SubscriptionInvoice[]) {
 }
 
 export async function getSubscriptionManagementPageData() {
-  const context = await requirePermission(
-    RESOURCE_CODES.subscriptionManagement,
-    "view",
-  );
-  const subscriptionSeed = await ensureSubscriberSubscription(context.company);
-
-  await markOverdueInvoices(subscriptionSeed.id, context.company.id);
-
-  const subscription = await prisma.subscriberSubscription.findUniqueOrThrow({
-    where: { id: subscriptionSeed.id },
-    include: {
-      invoices: true,
-    },
+  return getSubscriptionManagementPageDataOrchestration({
+    ensureSubscriberSubscription,
+    findNextCharge,
+    getInvoiceSortWeight,
+    isInvoicePayable,
+    mapInvoiceRow,
+    mapNextCharge,
+    markOverdueInvoices,
+    toCurrency,
+    toNumber,
   });
-  const sortedInvoices = [...subscription.invoices].sort((left, right) => {
-    const weightDifference =
-      getInvoiceSortWeight(left) - getInvoiceSortWeight(right);
-
-    if (weightDifference !== 0) {
-      return weightDifference;
-    }
-
-    return left.dueDate.getTime() - right.dueDate.getTime();
-  });
-  const nextCharge = findNextCharge(subscription.invoices);
-  const totalOpenAmount = subscription.invoices
-    .filter((invoice) => isInvoicePayable(invoice.status))
-    .reduce((total, invoice) => total + toNumber(invoice.amount), 0);
-  const nextChargeAmount =
-    nextCharge?.amount ?? subscription.nextChargeAmount ?? null;
-  const nextDueDate = nextCharge?.dueDate ?? subscription.nextDueDate ?? null;
-
-  return {
-    access: {
-      subscriptionManagement: getPermissionAccessFromMatrix(
-        context.permissions,
-        RESOURCE_CODES.subscriptionManagement,
-      ),
-    },
-    companyName: context.company.name,
-    invoices: sortedInvoices.map(mapInvoiceRow),
-    nextCharge: mapNextCharge(nextCharge),
-    summary: {
-      code: subscription.code,
-      nextChargeAmount: nextChargeAmount
-        ? toCurrency(nextChargeAmount, subscription.currency)
-        : "Sem cobranca agendada",
-      nextDueDate: nextDueDate ? formatDateBr(nextDueDate) : "Sem vencimento",
-      planName: subscription.planName,
-      status: subscription.status,
-      totalOpenAmount: toCurrency(totalOpenAmount, subscription.currency),
-      totalOpenAmountValue: totalOpenAmount,
-    },
-  } satisfies SubscriptionManagementPageData;
 }
 
 export async function cancelSubscriberSubscription() {
-  const context = await requirePermission(
-    RESOURCE_CODES.subscriptionManagement,
-    "manage",
-  );
-  const subscription = await ensureSubscriberSubscription(context.company);
-  const now = new Date();
-
-  await prisma.$transaction([
-    prisma.subscriberSubscription.update({
-      where: { id: subscription.id },
-      data: {
-        canceledAt: now,
-        status: "CANCELED",
-      },
-    }),
-    prisma.company.update({
-      where: { id: context.company.id },
-      data: {
-        isActive: true,
-        lastEditedAt: now,
-        lastEditedByUserId: context.user.id,
-        subscriptionStatus: "CANCELED",
-      },
-    }),
-  ]);
-
-  return {
-    ok: true as const,
-    message:
-      "Assinatura cancelada com sucesso. A conta permanece preservada para historico e reativacao futura.",
-  };
+  return cancelSubscriberSubscriptionOrchestration({
+    ensureSubscriberSubscription,
+  });
 }
 
 export async function prepareSubscriptionPayment(invoiceIds: string[]) {
-  const context = await requirePermission(
-    RESOURCE_CODES.subscriptionManagement,
-    "edit",
-  );
-  const uniqueInvoiceIds = Array.from(new Set(invoiceIds.filter(Boolean)));
-
-  if (uniqueInvoiceIds.length === 0) {
-    return {
-      ok: false as const,
-      message: "Selecione ao menos uma fatura em aberto para pagamento.",
-    };
-  }
-
-  const subscription = await ensureSubscriberSubscription(context.company);
-  const invoices = await prisma.subscriptionInvoice.findMany({
-    where: {
-      companyId: context.company.id,
-      id: {
-        in: uniqueInvoiceIds,
-      },
-      status: {
-        in: Array.from(payableInvoiceStatuses),
-      },
-      subscriptionId: subscription.id,
-    },
-    orderBy: [{ dueDate: "asc" }],
+  return prepareSubscriptionPaymentOrchestration(invoiceIds, {
+    ensureSubscriberSubscription,
+    toNumber,
   });
-
-  if (invoices.length !== uniqueInvoiceIds.length) {
-    return {
-      ok: false as const,
-      message:
-        "Uma ou mais faturas selecionadas nao estao disponiveis para pagamento.",
-    };
-  }
-
-  const totalAmount = invoices.reduce(
-    (total, invoice) => total + toNumber(invoice.amount),
-    0,
-  );
-  const preferredMethod: SubscriptionPaymentMethod =
-    invoices[0]?.paymentMethod ?? "STRIPE_CHECKOUT";
-  const payment = await prisma.subscriptionPayment.create({
-    data: {
-      amount: totalAmount.toFixed(2),
-      companyId: context.company.id,
-      currency: subscription.currency,
-      invoiceLinks: {
-        create: invoices.map((invoice) => ({
-          amount: invoice.amount.toString(),
-          invoiceId: invoice.id,
-        })),
-      },
-      method:
-        preferredMethod === "MANUAL" ? "STRIPE_CHECKOUT" : preferredMethod,
-      provider: "stripe",
-      providerPayload: {
-        integrationStatus: "stripe_checkout_pending",
-        invoiceIds: invoices.map((invoice) => invoice.id),
-      },
-      status: "CREATED",
-      subscriptionId: subscription.id,
-    },
-  });
-
-  return {
-    ok: true as const,
-    message:
-      "Solicitacao de pagamento preparada. A criacao da sessao Stripe podera ser conectada neste ponto.",
-    paymentAttemptId: payment.id,
-  };
 }
 
 export function getSubscriptionStatusLabel(status: SubscriptionStatus) {

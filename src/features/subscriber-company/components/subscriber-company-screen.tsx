@@ -22,7 +22,7 @@ import {
 import {
   cancelSubscriptionAction,
   saveSubscriberCompanyAction,
-} from "@/app/(authenticated)/assinante/actions";
+} from "@/features/subscriber-company/actions";
 import { AuthMessage } from "@/components/feedback/auth-message";
 import { Button } from "@/components/ui/button";
 import {
@@ -34,14 +34,14 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { PageHeader } from "@/components/ui/page-header";
-import { initialSubscriberCompanyActionState } from "@/lib/company/form-state";
+import { initialSubscriberCompanyActionState } from "@/features/subscriber-company/types/subscriber-company-form-state";
 import {
   formatBrazilPhone,
   formatCnpj,
   formatPostalCode,
 } from "@/lib/formatters/brazil";
 import { brazilianStates } from "@/lib/constants/brazil";
-import type { SubscriberCompanyPageData } from "@/lib/company/types";
+import type { SubscriberCompanyPageData } from "@/features/subscriber-company/types/subscriber-company-types";
 
 type SubscriberCompanyScreenProps = {
   data: SubscriberCompanyPageData;
