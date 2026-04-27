@@ -8,7 +8,7 @@ import type {
 import { requirePermission } from "@/lib/access-control/permission-service";
 import { RESOURCE_CODES } from "@/lib/access-control/resources";
 import { prisma } from "@/lib/db";
-import { payableInvoiceStatuses } from "@/lib/subscription/constants";
+import { payableInvoiceStatuses } from "@/features/subscription/constants/subscription-constants";
 
 type DecimalLike = {
   toNumber?: () => number;
@@ -104,4 +104,3 @@ export async function prepareSubscriptionPaymentOrchestration(
     paymentAttemptId: payment.id,
   };
 }
-

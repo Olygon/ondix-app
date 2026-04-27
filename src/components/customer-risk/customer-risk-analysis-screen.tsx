@@ -54,7 +54,7 @@ import type {
 } from "@/lib/customer-risk/types";
 import {
   customerTypeLabels,
-} from "@/lib/customer/constants";
+} from "@/features/customers/constants/customer-constants";
 import { cn } from "@/lib/helpers/cn";
 
 const selectClassName =

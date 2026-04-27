@@ -9,14 +9,14 @@ import type {
 
 import { formatDateBr } from "@/lib/formatters/brazil";
 import { prisma } from "@/lib/db";
-import { payableInvoiceStatuses } from "@/lib/subscription/constants";
+import { payableInvoiceStatuses } from "@/features/subscription/constants/subscription-constants";
 import { getSubscriptionManagementPageDataOrchestration } from "@/features/subscription/server/orchestration/subscription-management";
 import { cancelSubscriberSubscriptionOrchestration } from "@/features/subscription/server/orchestration/cancel-subscriber-subscription";
 import { prepareSubscriptionPaymentOrchestration } from "@/features/subscription/server/orchestration/prepare-subscription-payment";
 import type {
   SubscriptionInvoiceRow,
   SubscriptionNextCharge,
-} from "@/lib/subscription/types";
+} from "@/features/subscription/types/subscription-types";
 
 type DecimalLike = {
   toNumber?: () => number;
